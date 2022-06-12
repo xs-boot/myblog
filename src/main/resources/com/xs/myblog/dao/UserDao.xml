@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xs.myblog.dao.UserDao">
+    <resultMap id="blogTypeTagUser" type="com.xs.myblog.pojo.Blog">
+        <id property="id" column="id"/>
+        <result property="flag" column="flag"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="views" column="views"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="recommend" column="recommend"/>
+        <result property="published" column="published"/>
+        <result property="type.id" column="type_id"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="description" column="description"/>
+        <result property="appreciation" column="appreciation"/>
+        <result property="commentabled" column="commentabled"/>
+        <result property="shareStatement" column="share_statement"/>
+        <association property="type" javaType="com.xs.myblog.pojo.Type">
+            <id property="id" column="t_id"/>
+            <result property="name" column="t_name"/>
+        </association>
+        <association property="user" javaType="com.xs.myblog.pojo.User">
+            <id property="id" column="u_id"/>
+            <result property="nickname" column="nickname"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+        <collection property="tags" javaType="list" ofType="com.xs.myblog.pojo.Tag">
+            <id property="id" column="tag_id"/>
+            <result property="name" column="tag_name"/>
+        </collection>
+    </resultMap>
+
+    <update id="updatePassword">
+        update t_user set password = #{param2} where id = #{param1}
+    </update>
+
+    <update id="updateInformation">
+        UPDATE t_user SET avatar = #{avatar},email = #{email},nickname = #{nickname},username = #{username}
+                        ,province = #{province},city = #{city},update_time = now()
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAuthority">
+        DELETE FROM t_au_user WHERE u_id = #{userId} and a_id = #{aId}
+    </delete>
+
+    <delete id="deleteFriend">
+        delete from friend where user_id = #{userId} and friend_id = #{friendId}
+    </delete>
+
+    <select id="findByUsernameAndPassword" resultType="com.xs.myblog.pojo.User">
+        select * from t_user where username like #{username} and password like #{password}
+    </select>
+
+    <select id="getAuthority" resultType="java.lang.Integer">
+        SELECT
+            a_id authority
+        FROM
+            t_au_user auu
+                JOIN t_user u
+        WHERE
+            auu.u_id = u.id
+          AND u.id = #{userId}
+    </select>
+
+    <select id="getAllUsers" resultType="com.xs.myblog.pojo.User">
+        select * from t_user where id > 0
+    </select>
+
+    <select id="getUserByIdOrName" resultType="com.xs.myblog.pojo.User">
+        select * from t_user
+        <where>
+            <if test="userId != null">
+                and id = #{userId}
+            </if>
+            <if test="username != null">
+                and username = #{username}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllFriendIdByUserId" resultType="java.lang.Long">
+        select friend_id from friend where user_id = #{userId}
+    </select>
+
+    <select id="getFansNumbers" resultType="java.lang.Integer">
+        select count(*) from friend where friend_id = #{userId}
+    </select>
+
+    <select id="getAllBlogsByUserId" resultMap="blogTypeTagUser">
+        select * from t_blog where user_id = #{userId}
+    </select>
+
+    <select id="getAuthorityName" resultType="java.lang.String">
+        SELECT
+            a.` authority_name`
+        FROM
+            authority a
+                JOIN t_au_user au ON a.id = au.a_id
+                JOIN t_user u ON u.id = au.u_id
+                AND u.id = #{userId}
+    </select>
+
+    <select id="getAllFanIds" resultType="java.lang.Long">
+        select user_id from friend where friend_id = #{userId}
+    </select>
+
+    <select id="getUsersLikeName" resultType="com.xs.myblog.pojo.User">
+        select * from t_user where id > 0 and username like "%"#{username}"%"
+    </select>
+
+    <select id="getPasswordByUserId" resultType="java.lang.String">
+        select password from t_user where id = #{userId}
+    </select>
+
+    <select id="getUserByEmailAndPassword" resultType="com.xs.myblog.pojo.User">
+        select * from t_user where email = #{email} and password = #{password}
+    </select>
+
+    <select id="getUserByNameAndAuthority" resultType="com.xs.myblog.pojo.User">
+        SELECT
+            *
+        FROM
+            t_user u
+            JOIN t_au_user au ON u.id = au.u_id
+        WHERE
+            u.username LIKE "%"#{username}"%"
+          <if test="edit != null">
+              AND au.a_id = 1
+          </if>
+        <if test="speak != null">
+            AND au.a_id = 1
+        </if>
+    </select>
+
+    <select id="getAllUser" resultType="com.xs.myblog.pojo.User">
+        select * from t_user where id > 0
+    </select>
+
+    <insert id="registerUser">
+        INSERT INTO t_user(username,`password`,email,create_time) VALUES(#{username},#{password},#{email},now())
+    </insert>
+
+    <insert id="addAuthority">
+        INSERT INTO t_au_user(u_id,a_id) VALUES(#{userId},#{aId})
+    </insert>
+
+    <insert id="addFriend">
+        insert into friend(user_id, friend_id) values (#{userId}, #{adminId});
+    </insert>
+</mapper>
