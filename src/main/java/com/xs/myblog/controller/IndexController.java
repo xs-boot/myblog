@@ -170,6 +170,10 @@ public class IndexController {
         System.out.println("测试传送到GitHub上");
     }
 
+    void sshFun() {
+        System.out.println("使用ssh提交代码");
+    }
+
     int getScoreDefault(Blog blog) {
         int score = 0;
         if (blog.isRecommend())
