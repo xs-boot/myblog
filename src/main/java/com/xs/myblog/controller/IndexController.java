@@ -150,6 +150,10 @@ public class IndexController {
         return "redirect:/blog/" + blog.getId();
     }
 
+    void noFunction() {
+        System.out.println("测试git");
+    }
+
     int getScoreDefault(Blog blog) {
         int score = 0;
         if (blog.isRecommend())
