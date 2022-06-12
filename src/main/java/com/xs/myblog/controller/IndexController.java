@@ -172,6 +172,7 @@ public class IndexController {
 
     void sshFun() {
         System.out.println("使用ssh提交代码");
+        System.out.println("在GitHub上新增代码");
     }
 
     int getScoreDefault(Blog blog) {
