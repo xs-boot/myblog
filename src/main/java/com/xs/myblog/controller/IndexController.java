@@ -166,6 +166,10 @@ public class IndexController {
         System.out.println("测试合并冲突");
     }
 
+    void updateFun() {
+        System.out.println("测试传送到GitHub上");
+    }
+
     int getScoreDefault(Blog blog) {
         int score = 0;
         if (blog.isRecommend())
