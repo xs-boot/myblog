@@ -158,6 +158,10 @@ public class IndexController {
         System.out.println("测试分之合并");
     }
 
+    void hot_fixFun2() {
+        System.out.println("测试合并冲突");
+    }
+
     int getScoreDefault(Blog blog) {
         int score = 0;
         if (blog.isRecommend())
